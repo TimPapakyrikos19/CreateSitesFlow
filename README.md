@@ -51,5 +51,3 @@
   - Create Team only if `SiteType = Teams`.
 
 ---
-
-Let me know if you'd like me to print the unit test file or VS Code config files next!
