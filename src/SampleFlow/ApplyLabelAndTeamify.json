@@ -1,0 +1,79 @@
+{
+  "name": "ApplyLabelAndTeamify",
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json",
+    "actions": {
+      "ApplyLabel": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connection": {
+              "name": "@parameters('$connections')['GroupsLabelsApi']['connectionId']"
+            }
+          },
+          "operationId": "ApplyLabel",
+          "parameters": {
+            "id": "@variables('GroupId')",
+            "body": {
+              "labelId": "@variables('LabelId')"
+            }
+          }
+        },
+        "runAfter": {}
+      },
+      "Condition_Teams": {
+        "type": "If",
+        "expression": {
+          "equals": [
+            "@variables('SiteType')",
+            "Teams"
+          ]
+        },
+        "actions": {
+          "CreateTeam": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connection": {
+                  "name": "@parameters('$connections')['GroupsLabelsApi']['connectionId']"
+                }
+              },
+              "operationId": "CreateTeam",
+              "parameters": {
+                "id": "@variables('GroupId')",
+                "body": {
+                  "memberSettings": {
+                    "allowCreateUpdateChannels": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "runAfter": {
+          "ApplyLabel": ["Succeeded"]
+        }
+      }
+    },
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "schema": {}
+        }
+      }
+    }
+  },
+  "parameters": {
+    "$connections": {
+      "value": {
+        "GroupsLabelsApi": {
+          "connectionId": "/subscriptions/<sub-id>/resourceGroups/<rg>/providers/Microsoft.Web/connections/GroupsLabelsApi",
+          "connectionName": "GroupsLabelsApi",
+          "id": "/subscriptions/<sub-id>/providers/Microsoft.Web/locations/<region>/managedApis/GroupsLabelsApi"
+        }
+      }
+    }
+  }
+}

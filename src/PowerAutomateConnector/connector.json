@@ -1,0 +1,83 @@
+{
+  "name": "GroupsLabelsApi",
+  "properties": {
+    "connectionParameters": {},
+    "iconBrandColor": "#0078d4",
+    "capabilities": ["actions"],
+    "policyTemplateInstances": [],
+    "backendService": {
+      "serviceUrl": "https://<YOUR_FUNCTION_APP>.azurewebsites.net"
+    },
+    "auth": {
+      "type": "oauth2",
+      "identityProvider": "aad",
+      "clientId": "<CLIENT_ID>",
+      "scopes": "api://<CLIENT_ID>/access_as_user",
+      "authorizationUrl": "https://login.microsoftonline.com/<TENANT_ID>/oauth2/v2.0/authorize",
+      "tokenUrl": "https://login.microsoftonline.com/<TENANT_ID>/oauth2/v2.0/token",
+      "refreshUrl": "https://login.microsoftonline.com/<TENANT_ID>/oauth2/v2.0/token"
+    },
+    "actions": {
+      "GetLabels": {
+        "operationId": "GetLabels",
+        "summary": "List sensitivity labels",
+        "description": "GET /labels",
+        "visibility": "important",
+        "trigger": false,
+        "inputs": {
+          "method": "get",
+          "path": "/labels"
+        }
+      },
+      "ApplyLabel": {
+        "operationId": "ApplyLabel",
+        "summary": "Apply sensitivity label to group",
+        "inputs": {
+          "method": "post",
+          "path": "/groups/{id}/label",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "body": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "labelId": {
+                  "type": "string"
+                }
+              },
+              "required": ["labelId"]
+            }
+          }
+        }
+      },
+      "CreateTeam": {
+        "operationId": "CreateTeam",
+        "summary": "Upgrade group to Team",
+        "inputs": {
+          "method": "put",
+          "path": "/groups/{id}/team",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "body": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    }
+  }
+}
