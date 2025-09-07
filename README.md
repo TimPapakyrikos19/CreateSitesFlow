@@ -1,53 +1,35 @@
-# FunctionApp-PowerAutomate-Integration
+# CreateSitesFlow.Functions (.NET 8 isolated)
 
-## ✅ Quick Start
+This is a minimal Azure Functions project using the **.NET isolated worker** with a sample HTTP trigger at `/api/ping`.
 
-1. **Deploy the Azure Function App** to Azure using VS Code or Azure CLI.
-2. **Register the Function App** in Entra ID and expose the API scope `access_as_user`.
-3. **Import the custom connector** (`connector.json`) into Power Automate.
-4. **Import the sample flow** (`ApplyLabelAndTeamify.json`) and bind variables.
+## Structure
 
----
+```
+CreateSitesFlow.Functions/
+  CreateSitesFlow.Functions.csproj
+  Program.cs
+  PingFunction.cs
+host.json
+local.settings.json       # local only (excluded via .gitignore)
+.github/workflows/deploy-functions.yml
+```
 
-## 🛠️ Detailed Setup Instructions
+## Run locally
 
-### 1. Azure Function App
+1. Install Azure Functions Core Tools and .NET 8 SDK.
+2. Start the emulator for Azurite (or use a Storage account) and set `AzureWebJobsStorage` in `local.settings.json`.
+3. Run:
+   ```bash
+   func start
+   ```
+4. Test:
+   ```bash
+   curl http://localhost:7071/api/ping
+   ```
 
-- Use .NET 8 isolated process.
-- Add the following app settings:
-  - `TenantId`
-  - `ClientId`
-  - `ClientSecret`
-  - `GraphScopes`:  
-    ```
-    https://graph.microsoft.com/Group.ReadWrite.All https://graph.microsoft.com/Directory.Read.All https://graph.microsoft.com/Label.Read.All
-    ```
+## Deploy via GitHub Actions
 
-### 2. App Registration
+- Set repository secret `AZURE_FUNCTIONAPP_PUBLISH_PROFILE` with your Function App's Publish Profile XML.
+- Set `AZURE_FUNCTIONAPP_NAME` with your Function App name.
 
-- Register the Function App in Entra ID.
-- Expose an API scope: `api://<client-id>/access_as_user`
-- Add delegated Graph permissions:
-  - `Group.ReadWrite.All`
-  - `Directory.Read.All`
-  - `Label.Read.All`
-- Admin consent required.
-
-### 3. Power Automate Connector
-
-- Import `connector.json` into Power Automate.
-- Use OAuth 2.0 Authorization Code flow.
-- Scope: `api://<client-id>/access_as_user`
-
-### 4. Sample Flow
-
-- Import `ApplyLabelAndTeamify.json`.
-- Set variables:
-  - `GroupId`
-  - `LabelId`
-  - `SiteType` (Teams or SharePoint)
-- Flow logic:
-  - Apply label always.
-  - Create Team only if `SiteType = Teams`.
-
----
+On push to `main`, the workflow builds, publishes, and deploys to your app.
