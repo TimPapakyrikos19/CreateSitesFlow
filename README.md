@@ -27,7 +27,7 @@ local.settings.json       # local only (excluded via .gitignore)
    curl http://localhost:7071/api/ping
    ```
 
-## Deploy via GitHub Actions
+## Deploy via GitHub Action
 
 - Set repository secret `AZURE_FUNCTIONAPP_PUBLISH_PROFILE` with your Function App's Publish Profile XML.
 - Set `AZURE_FUNCTIONAPP_NAME` with your Function App name.
