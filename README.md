@@ -1,4 +1,3 @@
-
 # FunctionApp-Delegated-OBO
 
 
