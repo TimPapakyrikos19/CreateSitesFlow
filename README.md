@@ -1,6 +1,5 @@
 # FunctionApp-Delegated-OBO
 
-
 Azure Functions (.NET 8 isolated) middle-tier to perform **delegated** Microsoft Graph calls using the **On-Behalf-Of (OBO)** flow from Power Automate.
 
 Endpoints:
