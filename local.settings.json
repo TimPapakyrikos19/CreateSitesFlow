@@ -2,6 +2,12 @@
   "IsEncrypted": false,
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated"
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    "AzureAd__TenantId": "<YOUR-TENANT-ID>",
+    "AzureAd__ClientId": "<YOUR-API-APP-CLIENT-ID>",
+    "AzureAd__ClientSecret": "<YOUR-API-APP-CLIENT-SECRET>",
+    "Graph__Scopes": "https://graph.microsoft.com/.default",
+    "Graph__BaseUrl": "https://graph.microsoft.com",
+    "AllowedScopes": "api://<YOUR-API-APP-ID>/Flow.Access"
   }
 }

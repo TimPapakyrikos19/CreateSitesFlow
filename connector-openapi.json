@@ -1,0 +1,117 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Delegated Graph Bridge",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://<your-function>.azurewebsites.net"
+    }
+  ],
+  "paths": {
+    "/api/apply-label": {
+      "post": {
+        "summary": "Apply sensitivity label to M365 Group",
+        "operationId": "ApplyLabel",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  },
+                  "labelId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId",
+                  "labelId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "202": {
+            "description": "Accepted"
+          },
+          "4XX": {
+            "description": "Client error"
+          },
+          "5XX": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/enable-team": {
+      "post": {
+        "summary": "Enable Microsoft Teams for a Group",
+        "operationId": "EnableTeam",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "groupId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "202": {
+            "description": "Accepted"
+          },
+          "4XX": {
+            "description": "Client error"
+          },
+          "5XX": {
+            "description": "Server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "oauth2": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://login.microsoftonline.com/<tenant>/oauth2/v2.0/authorize",
+            "tokenUrl": "https://login.microsoftonline.com/<tenant>/oauth2/v2.0/token",
+            "scopes": {
+              "api://<API-APP-ID>/Flow.Access": "Access the Delegated Graph Bridge"
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2": [
+        "api://<API-APP-ID>/Flow.Access"
+      ]
+    }
+  ]
+}

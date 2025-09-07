@@ -1,0 +1,28 @@
+
+name: deploy-functions
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release
+      - name: Publish
+        run: dotnet publish --configuration Release -o publish
+      - name: 'Deploy to Azure Functions'
+        uses: azure/functions-action@v1
+        with:
+          app-name: ${{ secrets.AZ_FUNCTIONAPP_NAME }}
+          slot-name: 'production'
+          package: publish
+          publish-profile: ${{ secrets.AZ_FUNCTIONAPP_PUBLISH_PROFILE }}

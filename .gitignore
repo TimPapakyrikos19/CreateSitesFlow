@@ -1,0 +1,10 @@
+
+# Build
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# Local settings
+local.settings.json
