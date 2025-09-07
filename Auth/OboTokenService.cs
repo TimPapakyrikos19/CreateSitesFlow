@@ -1,4 +1,3 @@
-
 using Microsoft.Identity.Client;
 using Microsoft.Extensions.Configuration;
 
@@ -11,13 +10,23 @@ namespace Auth
 
         public OboTokenService(IConfiguration cfg)
         {
+            // Prefer ':' keys; fall back to '__' just in case
+            var tenantId     = cfg["AzureAd:TenantId"]     ?? cfg["AzureAd__TenantId"];
+            var clientId     = cfg["AzureAd:ClientId"]     ?? cfg["AzureAd__ClientId"];
+            var clientSecret = cfg["AzureAd:ClientSecret"] ?? cfg["AzureAd__ClientSecret"];
+            var authorityHost= cfg["AzureAd:AuthorityHost"]?? cfg["AzureAd__AuthorityHost"] ?? "https://login.microsoftonline.com";
+
+            if (string.IsNullOrWhiteSpace(tenantId))     throw new InvalidOperationException("AzureAd:TenantId missing.");
+            if (string.IsNullOrWhiteSpace(clientId))     throw new InvalidOperationException("AzureAd:ClientId missing.");
+            if (string.IsNullOrWhiteSpace(clientSecret)) throw new InvalidOperationException("AzureAd:ClientSecret missing.");
+
             _cca = ConfidentialClientApplicationBuilder
-                .Create(cfg["AzureAd__ClientId"]!)
-                .WithClientSecret(cfg["AzureAd__ClientSecret"]!)
-                .WithAuthority($"https://login.microsoftonline.com/{cfg["AzureAd__TenantId"]}")
+                .Create(clientId)
+                .WithClientSecret(clientSecret)
+                .WithAuthority($"{authorityHost}/{tenantId}")
                 .Build();
 
-            _graphScopes = new[] { cfg["Graph__Scopes"] ?? "https://graph.microsoft.com/.default" };
+            _graphScopes = new[] { cfg["Graph:Scopes"] ?? cfg["Graph__Scopes"] ?? "https://graph.microsoft.com/.default" };
         }
 
         public async Task<string> AcquireGraphTokenOnBehalfOfAsync(string incomingBearer)

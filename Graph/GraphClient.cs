@@ -1,4 +1,3 @@
-
 using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
 
@@ -11,21 +10,23 @@ namespace Graph
 
         public GraphClient(IConfiguration cfg)
         {
-            _base = (cfg["Graph__BaseUrl"] ?? "https://graph.microsoft.com").TrimEnd('/');
+            _base = (cfg["Graph:BaseUrl"] ?? cfg["Graph__BaseUrl"] ?? "https://graph.microsoft.com").TrimEnd('/');
         }
 
-        private HttpRequestMessage WithAuth(HttpMethod method, string path, string token, HttpContent? content = null)
+        public async Task<HttpResponseMessage> PatchAsync(string token, string path, HttpContent content)
         {
-            var req = new HttpRequestMessage(method, $"{_base}/v1.0/{path.TrimStart('/')}");
+            using var req = new HttpRequestMessage(HttpMethod.Patch, $"{_base}/v1.0/{path.TrimStart('/')}")
+            { Content = content };
             req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            if (content is not null) req.Content = content;
-            return req;
+            return await _http.SendAsync(req);
         }
 
-        public Task<HttpResponseMessage> PatchAsync(string token, string path, HttpContent content) =>
-            _http.SendAsync(WithAuth(HttpMethod.Patch, path, token, content));
-
-        public Task<HttpResponseMessage> PutAsync(string token, string path, HttpContent content) =>
-            _http.SendAsync(WithAuth(HttpMethod.Put, path, token, content));
+        public async Task<HttpResponseMessage> PutAsync(string token, string path, HttpContent content)
+        {
+            using var req = new HttpRequestMessage(HttpMethod.Put, $"{_base}/v1.0/{path.TrimStart('/')}")
+            { Content = content };
+            req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            return await _http.SendAsync(req);
+        }
     }
 }
